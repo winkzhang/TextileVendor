@@ -1,11 +1,12 @@
 <template>
   <div id="app">
-    <div class="header">
+    <!--<div class="header">
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
-        <span>商家中心</span>
+        <span class="store-version">商家中心</span>
+        <span class="my-name">{{this.username}}</span>
       </div>
-    </div>
+    </div>-->
     <router-view/>
     <div class="footer">
       <div class="footer-wrapper">
@@ -24,11 +25,18 @@
   export default {
     name: 'app',
     data () {
-      return {}
+      return {
+      }
       },
 
     methods: {
 
+    },
+    watch: {
+      /*username: function() {
+        console.log("aaaa");
+        this.name = username;
+      }*/
     }
   }
 </script>
@@ -55,13 +63,19 @@
   margin: 0 auto;
   position: relative;
 }
-.header-wrapper span {
+.store-version {
   font-size: 24px;
   color: #ffffff;
   position: absolute;
   top: 10px;
   left: 200px;
-
+}
+.my-name {
+  font-size: 16px;
+  color: #ffffff;
+  position: absolute;
+  top: 15px;
+  right: 0px;
 }
 .logo {
   display:inline-block;

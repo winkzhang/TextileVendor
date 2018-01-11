@@ -1,21 +1,30 @@
 <template>
-  <div id="index">
-    <div class="box-wrapper">
-      <div class="box-header">
-        <div class="login-word" @click="pressLogin" :class="{active:ifLog}"><span>登录</span></div>
-        <div class="regist-word" @click="pressRegister" :class="{active:ifReg}"><span>注册</span></div>
+  <div>
+    <div class="header">
+      <div class="header-wrapper">
+        <i class="logo logo-header"></i>
+        <span class="store-version">商家中心</span>
+        <span class="my-name">{{this.username}}</span>
       </div>
-      <div class="box-login" v-show="ifLog === true">
-        <div class="login-item"><label>手机号</label><input class="login-input" type="text" v-model="loginPhone" /></div>
-        <div class="login-item"><label>密码</label><input class="login-input" type="password" v-model="loginPassword" /></div>
-        <a class="login-button" @click="login"><span>登录</span></a>
-      </div>
-      <div class="box-reg" v-show="ifReg === true">
-        <div class="sign-item"><label>手机号</label><input class="login-input" type="text" v-model="signUpPhone" /></div>
-        <div class="sign-item"><label>用户名</label><input class="login-input" type="text" v-model="signUpName" /></div>
-        <div class="sign-item"><label>密码</label><input class="login-input" type="password" v-model="signUpPassword" /></div>
-        <div class="sign-item"><label>确认密码</label><input class="login-input" type="password" /></div>
-        <a class="sign-button" @click="signup"><span>注册</span></a>
+    </div>
+    <div id="index">
+      <div class="box-wrapper">
+        <div class="box-header">
+          <div class="login-word" @click="pressLogin" :class="{active:ifLog}"><span>登录</span></div>
+          <div class="regist-word" @click="pressRegister" :class="{active:ifReg}"><span>注册</span></div>
+        </div>
+        <div class="box-login" v-show="ifLog === true">
+          <div class="login-item"><label>手机号</label><input class="login-input" type="text" v-model="loginPhone" /></div>
+          <div class="login-item"><label>密码</label><input class="login-input" type="password" v-model="loginPassword" /></div>
+          <a class="login-button" @click="login"><span>登录</span></a>
+        </div>
+        <div class="box-reg" v-show="ifReg === true">
+          <div class="sign-item"><label>手机号</label><input class="login-input" type="text" v-model="signUpPhone" /></div>
+          <div class="sign-item"><label>用户名</label><input class="login-input" type="text" v-model="signUpName" /></div>
+          <div class="sign-item"><label>密码</label><input class="login-input" type="password" v-model="signUpPassword" /></div>
+          <div class="sign-item"><label>确认密码</label><input class="login-input" type="password" /></div>
+          <a class="sign-button" @click="signup"><span>注册</span></a>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +32,7 @@
 
 
 <script>
+  import global_ from '../Global'
   export default {
     name: 'IndexView',
     data () {
@@ -33,7 +43,8 @@
         loginPassword: '',
         signUpPhone: '',
         signUpName: '',
-        signUpPassword: ''
+        signUpPassword: '',
+        username: ''
       }
     },
 
@@ -47,22 +58,90 @@
         this.ifReg = true;
       },
       login: function() {
-
+        var login = {
+          "number": this.loginPhone,
+          "password": this.loginPassword,
+          "identity": "vendor"
+        }
+        this.$http.post('http://wink.net.cn:5000/login', login).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.$message(JSON.parse(response.bodyText).msg);
+              //global_.username = JSON.parse(response.bodyText).data;
+              global_.username = JSON.parse(response.bodyText).data;
+              this.username = JSON.parse(response.bodyText).data;
+              this.$router.push('/edit');
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       },
       signup: function() {
-        
+        var register = {
+          "number": this.signUpPhone,
+          "username": this.signUpName,
+          "password": this.signUpPassword,
+          "identity": "vendor"
+        }
+        this.$http.post('http://wink.net.cn:5000/signup', register).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.$message(JSON.parse(response.bodyText).msg);
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       }
     }
   }
 </script>
 
 <style>
+
   #index {
     font-family: Microsoft YaHei, 'Avenir', Helvetica, Arial, sans-serif;
     /*height: 1117px;*/
     background-color: #333333;
     border-top: 2px solid #797979;
     border-bottom: 2px solid #797979;
+  }
+
+  .header {
+    height: 50px;
+    background-color: #333333;
+    /*position: relative;*/
+  }
+  .header-wrapper {
+    width: 1280px;
+    height: 50px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .logo {
+    display:inline-block;
+    background: url("../assets/header/logo.png") no-repeat;
+    background-size: 140px 50px;
+    width: 140px;
+    height: 50px;
+    position: absolute;
+  }
+  .logo-header {
+    left: 0px;
+  }
+
+  .store-version {
+    font-size: 24px;
+    color: #ffffff;
+    position: absolute;
+    top: 10px;
+    left: 200px;
+  }
+  .my-name {
+    font-size: 16px;
+    color: #ffffff;
+    position: absolute;
+    top: 15px;
+    right: 0px;
   }
   .box-wrapper {
     background-color: #fff;
