@@ -1,13 +1,14 @@
 <template>
   <div id="app">
-    <!--<div class="header">
+    <div class="header">
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
         <span class="store-version">商家中心</span>
         <span class="my-name">{{this.username}}</span>
       </div>
-    </div>-->
-    <router-view/>
+    </div>
+    <!--绑定userSignIn事件-->
+    <router-view @userSignIn="userSignIn" />
     <div class="footer">
       <div class="footer-wrapper">
         <i class="logo logo-footer"></i>
@@ -26,17 +27,22 @@
     name: 'app',
     data () {
       return {
+        username: sessionStorage.userName
       }
       },
 
     methods: {
-
+      userSignIn: function(userName) {
+        sessionStorage.userName = userName;
+        this.username = sessionStorage.userName;
+      }
     },
     watch: {
       /*username: function() {
         console.log("aaaa");
         this.name = username;
       }*/
+
     }
   }
 </script>

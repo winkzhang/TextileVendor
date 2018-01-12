@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="header">
+    <!--<div class="header">
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
         <span class="store-version">商家中心</span>
         <span class="my-name">{{this.username}}</span>
       </div>
-    </div>
+    </div>-->
     <div id="index">
       <div class="info-header">
         <span class="platform">纺织平台</span>
@@ -108,7 +108,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   #index {
     font-family: Microsoft YaHei, 'Avenir', Helvetica, Arial, sans-serif;
     width: 1280px;

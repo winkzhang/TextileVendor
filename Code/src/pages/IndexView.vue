@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="header">
+    <!--<div class="header">
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
         <span class="store-version">商家中心</span>
         <span class="my-name">{{this.username}}</span>
       </div>
-    </div>
+    </div>-->
     <div id="index">
       <div class="box-wrapper">
         <div class="box-header">
@@ -68,8 +68,10 @@
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.$message(JSON.parse(response.bodyText).msg);
               //global_.username = JSON.parse(response.bodyText).data;
-              global_.username = JSON.parse(response.bodyText).data;
+              //global_.username = JSON.parse(response.bodyText).data;
               this.username = JSON.parse(response.bodyText).data;
+              // 触发userSignIn,向父组件App.vue传值，将用户名传过去
+              this.$emit('userSignIn', this.username);
               this.$router.push('/edit');
             } else {
               this.$message(JSON.parse(response.bodyText).msg);
@@ -96,7 +98,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 
   #index {
     font-family: Microsoft YaHei, 'Avenir', Helvetica, Arial, sans-serif;
