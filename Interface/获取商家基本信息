@@ -1,0 +1,19 @@
+// 根据用户名称，获取公司基本信息
+// http://wink.net.cn:5000/store/basicinfo?name=wink
+// method: get
+// respond:
+var req = {
+   isSuccess: true,
+   msg: "获取商家基本信息成功",
+   data: {
+     company: "彬彬纺织",
+     address: "广东省东莞市大朗镇康丰路90号",
+     phone: "13922973319",
+     fax: "0769-83019915",
+     star: {
+       id: "1",
+       name: "长纤人造毛"
+     },
+     pic: ""  //base64
+   }
+};

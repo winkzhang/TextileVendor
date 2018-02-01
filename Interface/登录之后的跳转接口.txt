@@ -1,0 +1,13 @@
+// 查询该公司是否有公司名称，如果有，则不是新商家，跳转到商家详情页；如果没有，则是新商家，跳转到录入信息的界面
+// http://wink.net.cn:5000/store/ifnew?name=wink
+// method: get
+// respond:
+var req = {
+   isSuccess: true,
+   msg: "查询是否新商家成功",
+   data: {
+     new: true
+     或者
+     new: false
+   }
+};

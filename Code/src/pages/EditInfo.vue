@@ -19,31 +19,48 @@
         <div class="edit-detail">
           <div class="edit-item">
             <label>公司名称</label>
-            <input type="text" />
+            <input type="text" v-model="companyName" />
           </div>
           <div class="edit-item">
             <label>地址</label>
-            <input type="text" />
+            <input type="text" v-model="address" />
           </div>
           <div class="edit-item">
             <label>电话</label>
-            <input type="text" />
+            <input type="text" v-model="phone" />
           </div>
           <div class="edit-item">
             <label>传真</label>
-            <input type="text" />
+            <input type="text" v-model="fax" />
           </div>
           <div class="star-item">
             <label class="star-word">主打产品</label>
             <div class="star-right">
               <label v-for="item in products" class="star-label">
-                <input name="textile" type="radio" value=""/>
+                <input name="textile" type="radio" :value="item.id" v-model="star" />
                 {{item.name}}
               </label>
             </div>
           </div>
-
+          <div class="company-pic">
+            <label>公司图片</label>
+            <el-upload
+              class="upload-demo upload-right"
+              action=""
+              :auto-upload="false"
+              limit="1"
+              :on-remove="handleRemove"
+              :on-change="handleChange"
+              multiple
+              :limit="1"
+              :on-exceed="handleExceed"
+              :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+          </div>
         </div>
+        <a class="finish" @click="finish">完成</a>
       </div>
     </div>
   </div>
@@ -57,6 +74,13 @@
     data () {
       return {
         username: global_.username,
+        selectSrc: '',
+        companyName: '',
+        address: '',
+        phone: '',
+        fax: '',
+        star: '1',
+        selectPic: "",
         products: [
           {
             name: "长纤人造毛",
@@ -98,12 +122,62 @@
             name: "拉架",
             id: '10'
           }
-        ]
+        ],
+        fileList: []
       }
     },
-
     methods: {
-
+      handleRemove: function(file, fileList) {
+        this.$message("图片已删除");
+      },
+      getBase64Image: function(img) {
+        var canvas = document.createElement('canvas');
+        canvas.height = img.height;
+        canvas.width = img.width;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var dataURL = canvas.toDataURL();
+        console.log(dataURL);
+        return dataURL;
+      },
+      handleChange: function(file, fileList) {
+        console.log(file, fileList);
+        var image = new Image();
+        image.src = file.url;
+        var that = this;
+        image.onload = function() {
+          that.selectPic = that.getBase64Image(image);
+        }
+      } ,
+      handleExceed: function() {
+        this.$message("只允许上传一张图片");
+      },
+      finish: function() {
+        if (this.companyName === '') {
+          this.$message("公司名称不能为空");
+        }
+        if (this.address === '') {
+          this.$message("地址不能为空");
+        }
+        if (this.phone === '') {
+          this.$message("电话不能为空");
+        }
+        if (this.fax === '') {
+          this.$message("传真不能为空");
+        }
+        var basicinfo = {
+          "company": this.companyName,
+          "address": this.address,
+          "phone": this.phone,
+          "fax": this.fax,
+          "star": this.star,
+          "pic": this.selectPic
+        }
+        this.$http.post('http://wink.net.cn:5000/store/editinfo/?name='+this.username, basicinfo).then(
+          (response) => {
+            
+          })
+      }
     }
   }
 </script>
@@ -183,7 +257,7 @@
   }
   .edit-info {
     position: relative;
-    height: 500px;
+    height: 700px;
   }
   .edit-info span {
     font-size: 18px;
@@ -210,15 +284,20 @@
   }
   .edit-item {
     height: 41px;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
   }
   .star-item {
     height: 82px;
-    margin-bottom: 25px;
-    margin-top: 30px;
+    margin-bottom: 20px;
+    margin-top: 40px;
     position: relative;
   }
-  .edit-item label {
+  .company-pic {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    position: relative;
+  }
+  .edit-item label, .company-pic label {
     width: 70px;
     display: inline-block;
     text-align: right;
@@ -248,11 +327,31 @@
     left: 90px;
     top: 0px;
   }
+  .upload-right {
+    width: 700px;
+    position: absolute;
+    left: 90px;
+    top: 0px;
+  }
   .edit-item input {
     width: 458px;
     height: 41px;
     border-radius: 5px;
     border: 1px solid #979797;
     font-size: 16px;
+  }
+  .finish {
+    display: inline-block;
+    width: 100px;
+    height: 40px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 5px;
+    background-color: #F57905;
+    position: absolute;
+    bottom: 40px;
+    cursor: pointer;
+    padding-top: 10px;
   }
 </style>
