@@ -1,8 +1,9 @@
 // 录入商家基本信息
-// http://wink.net.cn:5000/store/editinfo/?name=wink
+// http://wink.net.cn:5000/store/editinfo
 // method: post
 // POSTbody:
    var basicinfo = {};
+   basicinfo.name = "wink";
    basicinfo.company = "彬彬纺织";
    basicinfo.address = "广东省东莞市大朗镇康丰路90号";
    basicinfo.phone = "13922973319";

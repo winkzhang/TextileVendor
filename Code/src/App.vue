@@ -4,6 +4,7 @@
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
         <span class="store-version">商家中心</span>
+        <i v-show="ifdetail" class="order-icon"></i>
         <span class="my-name">{{this.username}}</span>
       </div>
     </div>
@@ -27,7 +28,8 @@
     name: 'app',
     data () {
       return {
-        username: sessionStorage.userName
+        username: sessionStorage.userName,
+        ifdetail: false
       }
       },
 
@@ -35,13 +37,11 @@
       userSignIn: function(userName) {
         sessionStorage.userName = userName;
         this.username = sessionStorage.userName;
+        this.ifdetail = true;
       }
     },
     watch: {
-      /*username: function() {
-        console.log("aaaa");
-        this.name = username;
-      }*/
+
 
     }
   }
@@ -126,5 +126,27 @@
   position: absolute;
   top: 80px;
   right: 120px;
+}
+.order-icon {
+  display: inline-block;
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: url('assets/header/order.png') no-repeat;
+  background-size: 32px 32px;
+  right: 60px;
+  top: 10px;
+}
+.el-dialog__header {
+  display: none;
+}
+.el-dialog__body {
+  padding: 0;
+}
+.el-button--text {
+  color: #333333;
+  background: 0 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 </style>

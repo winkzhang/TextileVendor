@@ -1,12 +1,5 @@
 <template>
   <div>
-    <!--<div class="header">
-      <div class="header-wrapper">
-        <i class="logo logo-header"></i>
-        <span class="store-version">商家中心</span>
-        <span class="my-name">{{this.username}}</span>
-      </div>
-    </div>-->
     <div id="index">
       <div class="info-header">
         <span class="platform">纺织平台</span>
@@ -68,12 +61,11 @@
 
 
 <script>
-  import global_ from '../Global'
   export default {
     name: 'EditInfo',
     data () {
       return {
-        username: global_.username,
+        username: '',
         selectSrc: '',
         companyName: '',
         address: '',
@@ -137,11 +129,10 @@
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         var dataURL = canvas.toDataURL();
-        console.log(dataURL);
         return dataURL;
       },
+      // 当选择图片时，触发此函数，将图片的url转化为base64
       handleChange: function(file, fileList) {
-        console.log(file, fileList);
         var image = new Image();
         image.src = file.url;
         var that = this;
@@ -165,7 +156,11 @@
         if (this.fax === '') {
           this.$message("传真不能为空");
         }
+        if (this.pic === '') {
+          this.$message("照片不能为空");
+        }
         var basicinfo = {
+          "name": this.username,
           "company": this.companyName,
           "address": this.address,
           "phone": this.phone,
@@ -173,11 +168,19 @@
           "star": this.star,
           "pic": this.selectPic
         }
-        this.$http.post('http://wink.net.cn:5000/store/editinfo/?name='+this.username, basicinfo).then(
+        var that = this;
+        this.$http.post('http://wink.net.cn:5000/store/editinfo', basicinfo).then(
           (response) => {
-            
-          })
+          if (JSON.parse(response.bodyText).isSuccess === true) {
+            this.$router.push('/detail/'+that.username);
+          } else {
+            this.$message(JSON.parse(response.bodyText).msg);
+          }
+        })
       }
+    },
+    mounted () {
+      this.username = this.$route.params.name;
     }
   }
 </script>

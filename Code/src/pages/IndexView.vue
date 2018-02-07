@@ -32,7 +32,6 @@
 
 
 <script>
-  import global_ from '../Global'
   export default {
     name: 'IndexView',
     data () {
@@ -67,12 +66,22 @@
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.$message(JSON.parse(response.bodyText).msg);
-              //global_.username = JSON.parse(response.bodyText).data;
-              //global_.username = JSON.parse(response.bodyText).data;
               this.username = JSON.parse(response.bodyText).data;
               // 触发userSignIn,向父组件App.vue传值，将用户名传过去
               this.$emit('userSignIn', this.username);
-              this.$router.push('/edit');
+              var that = this;
+              this.$http.get('http://wink.net.cn:5000/store/ifnew?name='+this.username).then(
+                (resp) => {
+                  if (JSON.parse(resp.bodyText).isSuccess === true) {
+                    if (JSON.parse(resp.bodyText).data.new === false) {
+                      this.$router.push('/edit/'+that.username);
+                    } else {
+                      this.$router.push('/detail/'+that.username);
+                    }
+                  } else {
+                    this.$message(JSON.parse(resp.bodyText).msg);
+                  }
+                })
             } else {
               this.$message(JSON.parse(response.bodyText).msg);
             }

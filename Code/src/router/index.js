@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import IndexView from '@/pages/IndexView'
 import EditInfo from '@/pages/EditInfo'
+import VendorDetail from '@/pages/VendorDetail'
 
 Vue.use(Router)
 
@@ -21,9 +22,14 @@ export default new Router({
       component: IndexView
     },
     {
-      path: '/edit',
+      path: '/edit/:name',
       name: 'EditInfo',
       component: EditInfo
+    },
+    {
+      path: '/detail/:name',
+      name: 'VendorDetail',
+      component: VendorDetail
     }
   ]
 })
