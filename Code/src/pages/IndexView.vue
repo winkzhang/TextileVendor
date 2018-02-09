@@ -74,9 +74,9 @@
                 (resp) => {
                   if (JSON.parse(resp.bodyText).isSuccess === true) {
                     if (JSON.parse(resp.bodyText).data.new === false) {
-                      this.$router.push('/edit/'+that.username);
-                    } else {
                       this.$router.push('/detail/'+that.username);
+                    } else {
+                      this.$router.push('/edit/'+that.username);
                     }
                   } else {
                     this.$message(JSON.parse(resp.bodyText).msg);

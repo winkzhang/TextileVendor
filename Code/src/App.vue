@@ -4,7 +4,7 @@
       <div class="header-wrapper">
         <i class="logo logo-header"></i>
         <span class="store-version">商家中心</span>
-        <i v-show="ifdetail" class="order-icon"></i>
+        <i v-show="ifdetail" class="order-icon" @click="jumpToOrder"></i>
         <span class="my-name">{{this.username}}</span>
       </div>
     </div>
@@ -38,6 +38,9 @@
         sessionStorage.userName = userName;
         this.username = sessionStorage.userName;
         this.ifdetail = true;
+      },
+      jumpToOrder: function() {
+        this.$router.push('/order/'+this.username);
       }
     },
     watch: {
@@ -136,6 +139,7 @@
   background-size: 32px 32px;
   right: 60px;
   top: 10px;
+  cursor: pointer;
 }
 .el-dialog__header {
   display: none;

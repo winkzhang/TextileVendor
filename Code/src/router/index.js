@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import IndexView from '@/pages/IndexView'
 import EditInfo from '@/pages/EditInfo'
 import VendorDetail from '@/pages/VendorDetail'
+import MyOrder from '@/pages/MyOrder'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/detail/:name',
       name: 'VendorDetail',
       component: VendorDetail
+    },
+    {
+      path: '/order/:name',
+      name: 'MyOrder',
+      component: MyOrder
     }
   ]
 })
