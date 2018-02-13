@@ -5,7 +5,7 @@
         <span class="platform">纺织平台</span>
         <i class="rightArrow"></i>
         <span class="vendor-name">{{vendorName}}</span>
-        <span class="cursor-pointer">
+        <span class="cursor-pointer" @click="editInfo">
           <i class="editicon"></i>
           <span class="edit-info">修改商家信息</span>
         </span>
@@ -62,7 +62,7 @@
           </div>
           <div class="input-bottom">
             <span>查看色卡</span>
-            <a>编辑</a>
+            <a @click="editSpec(item.id)">编辑</a>
           </div>
         </div>
       </div>
@@ -128,7 +128,73 @@
             <input type="file" @change="getFile($event)" class="productselect" />
           </div>
           <a class="cancel" @click="showAdd=false">取消</a>
-          <a class="save">保存</a>
+          <a class="save" @click="saveItem($event)">保存</a>
+        </div>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="showExisted">
+      <!--在el-dialog加类会导致点击其他地方不能关掉-->
+      <div class="add-box">
+        <div class="box-header">
+          <i class="logo logo-login"></i>
+        </div>
+        <div class="add-content">
+          <div class="productname">
+            <label>商品名称</label>
+            <el-select v-model="prevType" class="productselect">
+              <el-option v-for="item in productTypes" :key="item.id" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
+          </div>
+          <div class="add-item">
+            <label>支数</label>
+            <el-input type="text" class="add-input" v-model="newSpec" />
+            <label>单价</label>
+            <el-input type="text" class="add-input" v-model="newPrice" />
+            <a class="addition control" @click="addItem">增加</a>
+          </div>
+          <el-table
+            ref="multipleTable"
+            :data="specData"
+            tooltip-effect="dark"
+            style="width: 100%;padding-left:32px;margin-top:20px;"
+            @selection-change="handleSelectionChange">
+            <el-table-column
+              type="selection"
+              width="55">
+            </el-table-column>
+            <el-table-column
+              prop="spec"
+              label="支数"
+              width="120">
+              <input type="text" />
+            </el-table-column>
+            <el-table-column
+              prop="price"
+              label="单价/kg"
+              width="120">
+              <input type="text" />
+            </el-table-column>
+            <el-table-column
+              label="操作"
+              width="100">
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope.$index, specData)"
+                  type="text"
+                  size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="select-file">
+            <label>上传色卡</label>
+            <input type="file" @change="getFile($event)" class="productselect" />
+            <a class="lookColor">查看色卡</a>
+          </div>
+          <a class="cancel" @click="showAdd=false">取消</a>
+          <a class="save" @click="saveItem($event)">保存</a>
         </div>
       </div>
     </el-dialog>
@@ -153,7 +219,7 @@
         products: [
           {
             name: "长纤人造毛",
-            id: "1",
+            id: 1,
             specs: [
               {
                 order: "1",
@@ -169,7 +235,7 @@
           },
           {
             name: "丝光棉",
-            id: "2",
+            id: 2,
             specs: [
               {
                 number: "24/2",
@@ -194,23 +260,19 @@
             price: "20"
           }
         ],
-        file: ''
-
-
+        file: '',
+        multipleSelection: [],
+        showExisted: false,
+        prevType: ''
       }
     },
     methods: {
       addProduct: function() {
         this.showAdd = true;
-        this.$http.get('http://wink.net.cn:5000/home/commodity').then(
-          (response) => {
-            if (JSON.parse(response.bodyText).isSuccess === true) {
-              this.productTypes = JSON.parse(response.bodyText).data;
-              this.productType = this.productTypes[0].id;
-            } else {
-              this.$message(JSON.parse(response.bodyText).msg);
-            }
-          })
+      },
+      editSpec: function(id) {
+        this.prevType = id;
+        this.showExisted = true;
       },
       addItem: function() {
         var newItem = {};
@@ -225,10 +287,44 @@
       getFile: function(event) {
         this.file = event.target.files[0];
         console.log(this.file);
+      },
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
+      saveItem: function(event) {
+        this.showAdd = false;
+        event.preventDefault();
+        var formData = new FormData();
+        formData.append('productId', this.productType);
+        console.log(formData.get('productId'));
+        //var specArray = [];
+        for (var i = 0; i < this.multipleSelection.length; i++) {
+          var obj = {};
+          obj.spec = this.multipleSelection[i].spec;
+          obj.price = this.multipleSelection[i].price;
+          //specArray.push(obj);
+          formData.append('specArray', obj);
+        }
+        formData.append('file', this.file);
+      },
+      editInfo: function() {
+        this.$router.push('/edit/'+ this.username);
+      },
+      getCommodity: function() {
+        this.$http.get('http://wink.net.cn:5000/home/commodity').then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.productTypes = JSON.parse(response.bodyText).data;
+              this.productType = this.productTypes[0].id;
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       }
     },
     mounted () {
       this.username = this.$route.params.name;
+      this.getCommodity();
     }
   }
 </script>
@@ -556,6 +652,7 @@
     color: #333333;
   }
   .productselect {
+    width: 200px;
     margin-left: 41px;
     margin-bottom: 20px;
   }
@@ -627,6 +724,12 @@
     margin-left: 30px;
     cursor: pointer;
     margin-bottom: 20px;
+  }
+  .lookColor {
+    font-size: 16px;
+    color: #F57905;
+    text-decoration: underline;
+    cursor: pointer;
   }
 
 </style>

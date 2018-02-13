@@ -1,0 +1,33 @@
+// 录入商品信息（支数和价格）
+// http://wink.net.cn:5000/store/enterproduct/pdf
+// method: post
+// POSTbody:
+  var formdata = new FormData();      // 商家的每一个产品都有一个Pdf色卡文件
+  formdata.append('productId', '1');  string类型
+  formdata.append('name', 'wink');    string类型
+  formdata.append('file', file);      file类型
+
+// respond:
+var req = {
+   isSuccess: true,
+   msg: "录入pdf成功",
+   data: {                        // 不管录入是否成功，返回当前商家的所有产品信息，页面要显示商家当前已经录入的产品
+     products: [
+       {
+         productId: '1',
+         productName: '长纤人造毛',
+         detail: [
+           {
+             spec: "28/2",
+             price: "23"
+           },
+           {
+             spec: "26/2",
+             price: "423"
+           }
+         ],
+         pdf: ""
+       }
+     ]
+   }
+};

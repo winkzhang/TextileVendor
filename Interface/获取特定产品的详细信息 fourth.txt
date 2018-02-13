@@ -1,0 +1,21 @@
+// 获取特定产品详细信息（当点击编辑时，将从此接口获得的数据展示在弹框内）
+// http://wink.net.cn:5000/store/showproduct/detail?name=wink&&productId=1
+// method: get
+// respond:
+var req = {
+   isSuccess: true,
+   msg: "获取特定产品信息成功",
+   data: {
+      detail: [
+        {
+          spec: "28/2",
+          price: "23"
+        },
+        {
+          spec: "26/2",
+          price: "423"
+        }
+      ],
+      pdf: ""
+    }
+};

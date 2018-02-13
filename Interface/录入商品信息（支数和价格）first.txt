@@ -1,0 +1,24 @@
+// 录入商品信息（支数和价格）
+// http://wink.net.cn:5000/store/enterproduct/spec
+// method: post
+// POSTbody:
+  var arr = [];
+  var obj1 = {};
+  obj1.spec = "28/2";
+  obj1.price = "23";
+  var obj2 = {};
+  obj2.spec = "26/2";
+  obj2.price = "423";
+  arr.push(obj1);
+  arr.push(obj2);
+
+   var enterproduct = {};
+   enterproduct.name = "wink";    //特定的用户对应特定的公司，一个用户名只能注册一个商家
+   enterproduct.productId = "1";  //产品类型
+   enterproduct.detail = arr;     //支数和价格，对象数组
+
+// respond:
+var req = {
+   isSuccess: true,
+   msg: "录入商品支数和价格成功"
+};

@@ -51,6 +51,7 @@
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
+            <img :src=imgSrc class="existedImg" v-if="ifExistedImg" />
           </div>
         </div>
         <a class="finish" @click="finish">完成</a>
@@ -115,7 +116,9 @@
             id: '10'
           }
         ],
-        fileList: []
+        fileList: [],
+        imgSrc: '',
+        ifExistedImg: false
       }
     },
     methods: {
@@ -177,10 +180,31 @@
             this.$message(JSON.parse(response.bodyText).msg);
           }
         })
+      },
+      getBasicInfo: function() {
+        this.$http.get('http://wink.net.cn:5000/store/basicinfo?name=' + this.username).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              if (JSON.parse(response.bodyText).data.company === null) {
+                this.ifExistedImg = false;
+              } else {
+                this.ifExistedImg = true;
+                this.companyName = JSON.parse(response.bodyText).data.company;
+                this.address = JSON.parse(response.bodyText).data.address;
+                this.phone = JSON.parse(response.bodyText).data.phone;
+                this.fax = JSON.parse(response.bodyText).data.fax;
+                this.star = JSON.parse(response.bodyText).data.star.id;
+                this.imgSrc = JSON.parse(response.bodyText).data.pic;
+              }
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       }
     },
     mounted () {
       this.username = this.$route.params.name;
+      this.getBasicInfo();
     }
   }
 </script>
@@ -260,7 +284,7 @@
   }
   .edit-info {
     position: relative;
-    height: 700px;
+    height: 800px;
   }
   .edit-info span {
     font-size: 18px;
@@ -310,7 +334,7 @@
   }
   .star-label {
     display: inline-block;
-    width: 130px;
+    width: 140px;
     font-size: 13px;
     color: #333333;
     margin-right: 10px;
@@ -325,7 +349,7 @@
     margin-right: 20px;
   }
   .star-right {
-    width: 700px;
+    width: 800px;
     position: absolute;
     left: 90px;
     top: 0px;
@@ -356,5 +380,13 @@
     bottom: 40px;
     cursor: pointer;
     padding-top: 10px;
+  }
+  .existedImg {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #999999;
+    position: absolute;
+    top: 100px;
+    left: 90px;
   }
 </style>
