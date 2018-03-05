@@ -11,7 +11,7 @@
         </span>
       </div>
       <div class="vendor-detail">
-        <div class="vendor-img"><img src="../assets/vendor/binbin.jpg" /></div>
+        <div class="vendor-img"><img :src="uploadPic" /></div>
         <div class="detail-right">
           <div class="detail-name">{{vendorName}}</div>
           <div class="detail-wrapper">
@@ -28,7 +28,7 @@
             <div class="detail-item-per">
               <i class="item-tax-icon"></i>
               <label class="detail-title">传真</label>
-              <span class="detail-value">{{tax}}</span>
+              <span class="detail-value">{{fax}}</span>
             </div>
             <div class="detail-item-per">
               <i class="item-product-icon"></i>
@@ -47,22 +47,22 @@
       <div class="input-detail">
         <div v-for="item in products" class="input-item">
           <div class="order-header">
-            <span>{{item.name}}</span>
-            <i class="delete"></i>
+            <span>{{item.productName}}</span>
+            <i class="delete" @click="deleteProduct(item.productId)"></i>
           </div>
-          <div v-for="spec in item.specs" class="line-item">
+          <div v-for="detail in item.detail" class="line-item">
             <span class="spec-wrapper">
               <i class="spec-icon"></i>
-              <span class="line-word">{{spec.number}}</span>
+              <span class="line-word">{{detail.spec}}</span>
             </span>
             <span class="price-wrapper">
               <i class="price-icon"></i>
-              <span class="line-word">{{spec.price}}元/kg</span>
+              <span class="line-word">{{detail.price}}元/kg</span>
             </span>
           </div>
           <div class="input-bottom">
-            <span>查看色卡</span>
-            <a @click="editSpec(item.id)">编辑</a>
+            <span @click="checkColor(item.pdf)">查看色卡</span>
+            <a @click="editSpec(item.productId)">编辑</a>
           </div>
         </div>
       </div>
@@ -191,10 +191,10 @@
           <div class="select-file">
             <label>上传色卡</label>
             <input type="file" @change="getFile($event)" class="productselect" />
-            <a class="lookColor">查看色卡</a>
+            <a class="lookColor" @click="checkColor(url)">查看色卡</a>
           </div>
           <a class="cancel" @click="showAdd=false">取消</a>
-          <a class="save" @click="saveItem($event)">保存</a>
+          <a class="save" @click="updateItem($event)">保存</a>
         </div>
       </div>
     </el-dialog>
@@ -208,62 +208,24 @@
     data () {
       return {
         username: '',
-        vendorName: '彬彬纺织贸易有限公司',
-        address: '广东省东莞市大朗镇康丰路90号',
-        phone: '13922973319',
-        tax: '0769-83019915',
-        product: '长纤人造毛',
+        vendorName: '',
+        address: '',
+        phone: '',
+        fax: '',
+        product: '',
         showAdd: false,
         newSpec: '',
         newPrice: '',
-        products: [
-          {
-            name: "长纤人造毛",
-            id: 1,
-            specs: [
-              {
-                order: "1",
-                number: "28/2",
-                price: "20"
-              },
-              {
-                order: "2",
-                number: "26/2",
-                price: "40"
-              }
-            ]
-          },
-          {
-            name: "丝光棉",
-            id: 2,
-            specs: [
-              {
-                number: "24/2",
-                price: "22"
-              },
-              {
-                number: "20/2",
-                price: "43"
-              }
-            ]
-          }
-        ],
+        products: [],
         productType: '',
         productTypes: [],
-        specData: [
-          {
-            spec: "28/2",
-            price: "40"
-          },
-          {
-            spec: "26/2",
-            price: "20"
-          }
-        ],
+        specData: [],
         file: '',
         multipleSelection: [],
         showExisted: false,
-        prevType: ''
+        prevType: '',
+        uploadPic: '',
+        url: ''
       }
     },
     methods: {
@@ -273,6 +235,15 @@
       editSpec: function(id) {
         this.prevType = id;
         this.showExisted = true;
+        this.$http.get('http://wink.net.cn:5000/store/showproduct/detail?name='+this.username+'&&productId='+id).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.specData = JSON.parse(response.bodyText).data.detail;
+              this.url = JSON.parse(response.bodyText).data.pdf;
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       },
       addItem: function() {
         var newItem = {};
@@ -292,23 +263,99 @@
         this.multipleSelection = val;
       },
       saveItem: function(event) {
-        this.showAdd = false;
-        event.preventDefault();
-        var formData = new FormData();
-        formData.append('productId', this.productType);
-        console.log(formData.get('productId'));
-        //var specArray = [];
+        if (this.multipleSelection.length === 0) {
+          this.$message('至少要录入一个支数');
+          return;
+        }
+        if (this.file === '') {
+          this.$message('至少要上传一个文件');
+          return;
+        }
+        var enterproduct = {};
+        var arr = [];
         for (var i = 0; i < this.multipleSelection.length; i++) {
           var obj = {};
           obj.spec = this.multipleSelection[i].spec;
           obj.price = this.multipleSelection[i].price;
-          //specArray.push(obj);
-          formData.append('specArray', obj);
+          arr.push(obj);
         }
+        enterproduct.name = this.username;
+        enterproduct.productId = this.productType;
+        enterproduct.detail = arr;
+        enterproduct.url = "";
+        var that = this;
+        this.$http.post('http://wink.net.cn:5000/store/enterproduct/spec', enterproduct).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              that.postFile();
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+              that.postFile();
+            }
+          })
+
+      },
+      updateItem: function(event) {
+        if (this.multipleSelection.length === 0) {
+          this.$message('至少要录入一个支数');
+          return;
+        }
+        var enterproduct = {};
+        var arr = [];
+        for (var i = 0; i < this.multipleSelection.length; i++) {
+          var obj = {};
+          obj.spec = this.multipleSelection[i].spec;
+          obj.price = this.multipleSelection[i].price;
+          arr.push(obj);
+        }
+        enterproduct.name = this.username;
+        enterproduct.productId = this.productType;
+        enterproduct.detail = arr;
+        // 此时是编辑，已经上传过pdf，有url
+        enterproduct.url = this.url;
+        var that = this;
+        this.$http.post('http://wink.net.cn:5000/store/enterproduct/spec', enterproduct).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              // 如果有上传新的pdf，调用上传文件的接口，否则不调用
+              if (that.file !== '') {
+                that.postFile();
+                return;
+              }
+              this.showAdd = false;
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+              if (that.file !== '') {
+                that.postFile();
+                return;
+              }
+              this.showAdd = false;
+            }
+          })
+      },
+      postFile: function() {
+        this.showAdd = false;
+        event.preventDefault();
+        var formData = new FormData();
+        formData.append('productId', this.productType);
+        formData.append('name', this.username);
         formData.append('file', this.file);
+        this.$http.post('http://wink.net.cn:5000/store/enterproduct/pdf', formData).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.products = JSON.parse(response.bodyText).data;
+              this.file = '';
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+              this.file = '';
+            }
+          })
       },
       editInfo: function() {
         this.$router.push('/edit/'+ this.username);
+      },
+      checkColor: function(pdf) {
+        window.open("http://"+pdf);
       },
       getCommodity: function() {
         this.$http.get('http://wink.net.cn:5000/home/commodity').then(
@@ -320,11 +367,55 @@
               this.$message(JSON.parse(response.bodyText).msg);
             }
           })
+      },
+      getTotalInfo: function() {
+        this.$http.get('http://wink.net.cn:5000/store/totalinfo?name='+this.username).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.uploadPic = JSON.parse(response.bodyText).data.pic;
+              this.vendorName = JSON.parse(response.bodyText).data.company;
+              this.address = JSON.parse(response.bodyText).data.address;
+              this.phone = JSON.parse(response.bodyText).data.phone;
+              this.fax = JSON.parse(response.bodyText).data.fax;
+              this.products = JSON.parse(response.bodyText).data.products;
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
+      },
+      deleteProduct: function(id) {
+        this.$confirm('此操作将删除该产品信息, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var deleteproduct = {};
+          deleteproduct.name = this.username;
+          deleteproduct.productId = id;
+          this.$http.post('http://wink.net.cn:5000/store/deleteproduct', deleteproduct).then(
+            (response) => {
+              if (JSON.parse(response.bodyText).isSuccess === true) {
+                this.getTotalInfo();
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              } else {
+                this.$message(JSON.parse(response.bodyText).msg);
+              }
+            })
+        }).catch(() => {
+          /*this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });*/
+        });
       }
     },
     mounted () {
       this.username = this.$route.params.name;
       this.getCommodity();
+      this.getTotalInfo();
     }
   }
 </script>

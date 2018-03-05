@@ -15,7 +15,25 @@
    var enterproduct = {};
    enterproduct.name = "wink";    //特定的用户对应特定的公司，一个用户名只能注册一个商家
    enterproduct.productId = "1";  //产品类型
-   enterproduct.detail = arr;     //支数和价格，对象数组
+   enterproduct.detail.arr = arr;     //支数和价格，对象数组
+   enterproduct.url = "";
+
+   {
+     "name": "wink",
+     "productId": "1",
+     "detail":
+       [
+         {
+           "spec": "28/2",
+           "price": "23"
+         },
+         {
+           "spec": "26/2",
+           "price": "423"
+         }
+       ],
+       "url": ""
+   }
 
 // respond:
 var req = {

@@ -12,7 +12,7 @@
         <div class="edit-detail">
           <div class="edit-item">
             <label>公司名称</label>
-            <input type="text" v-model="companyName" />
+            <input type="text" v-model="companyName" :disabled="ifDisable" />
           </div>
           <div class="edit-item">
             <label>地址</label>
@@ -118,7 +118,8 @@
         ],
         fileList: [],
         imgSrc: '',
-        ifExistedImg: false
+        ifExistedImg: false,
+        ifDisable: false
       }
     },
     methods: {
@@ -159,7 +160,7 @@
         if (this.fax === '') {
           this.$message("传真不能为空");
         }
-        if (this.pic === '') {
+        if (this.selectPic === '') {
           this.$message("照片不能为空");
         }
         var basicinfo = {
@@ -195,6 +196,8 @@
                 this.fax = JSON.parse(response.bodyText).data.fax;
                 this.star = JSON.parse(response.bodyText).data.star.id;
                 this.imgSrc = JSON.parse(response.bodyText).data.pic;
+                this.selectPic = JSON.parse(response.bodyText).data.pic;
+                this.ifDisable = true;
               }
             } else {
               this.$message(JSON.parse(response.bodyText).msg);
