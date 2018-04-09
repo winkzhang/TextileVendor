@@ -235,7 +235,11 @@
       editSpec: function(id) {
         this.prevType = id;
         this.showExisted = true;
-        this.$http.get('http://wink.net.cn:5000/store/showproduct/detail?name='+this.username+'&&productId='+id).then(
+        var showproduct = '';
+        showproduct = this.$api.api.showproduct.replace(/username/, this.username);
+        showproduct = showproduct.replace(/userid/, id);
+        // 'http://wink.net.cn:5000/store/showproduct/detail?name='+this.username+'&&productId='+id
+        this.$http.get(showproduct).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.specData = JSON.parse(response.bodyText).data.detail;
@@ -284,7 +288,7 @@
         enterproduct.detail = arr;
         enterproduct.url = "";
         var that = this;
-        this.$http.post('http://wink.net.cn:5000/store/enterproduct/spec', enterproduct).then(
+        this.$http.post(this.$api.api.enterproduct, enterproduct).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               that.postFile();
@@ -314,7 +318,7 @@
         // 此时是编辑，已经上传过pdf，有url
         enterproduct.url = this.url;
         var that = this;
-        this.$http.post('http://wink.net.cn:5000/store/enterproduct/spec', enterproduct).then(
+        this.$http.post(this.$api.api.enterproduct, enterproduct).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               // 如果有上传新的pdf，调用上传文件的接口，否则不调用
@@ -340,7 +344,7 @@
         formData.append('productId', this.productType);
         formData.append('name', this.username);
         formData.append('file', this.file);
-        this.$http.post('http://wink.net.cn:5000/store/enterproduct/pdf', formData).then(
+        this.$http.post(this.$api.api.uploadpdf, formData).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.products = JSON.parse(response.bodyText).data;
@@ -358,7 +362,7 @@
         window.open("http://"+pdf);
       },
       getCommodity: function() {
-        this.$http.get('http://wink.net.cn:5000/home/commodity').then(
+        this.$http.get(this.$api.api.getcommodity).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.productTypes = JSON.parse(response.bodyText).data;
@@ -369,7 +373,7 @@
           })
       },
       getTotalInfo: function() {
-        this.$http.get('http://wink.net.cn:5000/store/totalinfo?name='+this.username).then(
+        this.$http.get(this.$api.api.gettotalinfo+this.username).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.uploadPic = JSON.parse(response.bodyText).data.pic;
@@ -392,7 +396,7 @@
           var deleteproduct = {};
           deleteproduct.name = this.username;
           deleteproduct.productId = id;
-          this.$http.post('http://wink.net.cn:5000/store/deleteproduct', deleteproduct).then(
+          this.$http.post(this.$api.api.deleteproduct, deleteproduct).then(
             (response) => {
               if (JSON.parse(response.bodyText).isSuccess === true) {
                 this.getTotalInfo();

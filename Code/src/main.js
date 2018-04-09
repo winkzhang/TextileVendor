@@ -6,6 +6,7 @@ import router from './router'
 import VueReasource from 'vue-resource'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import api from './config/api'
 
 Vue.config.productionTip = false
 /*Vue.prototype.$library = {
@@ -14,6 +15,9 @@ Vue.config.productionTip = false
 
 Vue.use(VueReasource)
 Vue.use(Element)
+Object.defineProperty(Vue.prototype, '$api', {
+  value: api
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

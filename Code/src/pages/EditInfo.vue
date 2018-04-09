@@ -30,7 +30,7 @@
             <label class="star-word">主打产品</label>
             <div class="star-right">
               <label v-for="item in products" class="star-label">
-                <input name="textile" type="radio" :value="item.id" v-model="star" />
+                <input name="textile" type="radio" :value="item.name" v-model="star" />
                 {{item.name}}
               </label>
             </div>
@@ -72,7 +72,7 @@
         address: '',
         phone: '',
         fax: '',
-        star: '1',
+        star: '长纤人造毛',
         selectPic: "",
         products: [
           {
@@ -173,7 +173,7 @@
           "pic": this.selectPic
         }
         var that = this;
-        this.$http.post('http://wink.net.cn:5000/store/editinfo', basicinfo).then(
+        this.$http.post(this.$api.api.editinfo, basicinfo).then(
           (response) => {
           if (JSON.parse(response.bodyText).isSuccess === true) {
             this.$router.push('/detail/'+that.username);
@@ -183,7 +183,7 @@
         })
       },
       getBasicInfo: function() {
-        this.$http.get('http://wink.net.cn:5000/store/basicinfo?name=' + this.username).then(
+        this.$http.get(this.$api.api.getbasicinfo + this.username).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               if (JSON.parse(response.bodyText).data.company === null) {
@@ -194,7 +194,7 @@
                 this.address = JSON.parse(response.bodyText).data.address;
                 this.phone = JSON.parse(response.bodyText).data.phone;
                 this.fax = JSON.parse(response.bodyText).data.fax;
-                this.star = JSON.parse(response.bodyText).data.star.id;
+                this.star = JSON.parse(response.bodyText).data.star.name;
                 this.imgSrc = JSON.parse(response.bodyText).data.pic;
                 this.selectPic = JSON.parse(response.bodyText).data.pic;
                 this.ifDisable = true;

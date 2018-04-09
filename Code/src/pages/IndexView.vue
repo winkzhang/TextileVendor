@@ -62,7 +62,7 @@
           "password": this.loginPassword,
           "identity": "vendor"
         }
-        this.$http.post('http://wink.net.cn:5000/login', login).then(
+        this.$http.post(this.$api.api.login, login).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.$message(JSON.parse(response.bodyText).msg);
@@ -70,7 +70,7 @@
               // 触发userSignIn,向父组件App.vue传值，将用户名传过去
               this.$emit('userSignIn', this.username);
               var that = this;
-              this.$http.get('http://wink.net.cn:5000/store/ifnew?name='+this.username).then(
+              this.$http.get(this.$api.api.ifnew+this.username).then(
                 (resp) => {
                   if (JSON.parse(resp.bodyText).isSuccess === true) {
                     if (JSON.parse(resp.bodyText).data.new === false) {
@@ -94,7 +94,7 @@
           "password": this.signUpPassword,
           "identity": "vendor"
         }
-        this.$http.post('http://wink.net.cn:5000/signup', register).then(
+        this.$http.post(this.$api.api.signup, register).then(
           (response) => {
             if (JSON.parse(response.bodyText).isSuccess === true) {
               this.$message(JSON.parse(response.bodyText).msg);
