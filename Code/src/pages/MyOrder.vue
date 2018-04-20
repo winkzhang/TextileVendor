@@ -1,3 +1,4 @@
+<!--author:winkzhang-->
 <template>
   <div id="index">
     <div class="product-header">
@@ -21,12 +22,12 @@
         </thead>
         <tbody>
         <tr v-for="item in orders">
-          <td>{{item.product}}</td>
+          <td>{{item.productName}}</td>
           <td>{{item.spec}} | {{item.color}}</td>
-          <td>{{item.number}}</td>
-          <td>{{item.totalprice}}</td>
+          <td>{{item.amount}}</td>
+          <td>{{item.total_price}}</td>
           <td>{{item.status}}</td>
-          <td><a class="buyer" @click="showDetail">{{item.buyer}}</a></td>
+          <td><a class="buyer" @click="showDetail">{{item.customer}}</a></td>
           <td style="position:relative;width:10%"><a class="go-pay" v-if="item.status === '待支付'" @click="goToPay">去支付</a><a class="go-pay" v-if="item.status === '待发货'" >确认发货</a><a class="cancel">取消</a></td>
         </tr>
         </tbody>
@@ -75,44 +76,14 @@
     },
     methods: {
       getOrder: function() {
-        var order = [];
-        var detail1 = {};
-        detail1.product = "丝光棉";
-        detail1.spec = "28/2";
-        detail1.color = "823333";
-        detail1.number = 4;
-        detail1.totalprice = 400;
-        detail1.status = "待支付";
-        detail1.buyer = "wink";
-        detail1.receiverName = "张祺";
-        detail1.receiverAddress = "广东省东莞市大朗镇敏捷春天花园3栋";
-        detail1.receiverPhone = "18819253694";
-        var detail2 = {};
-        detail2.product = "长纤人造毛";
-        detail2.spec = "24/2";
-        detail2.color = "922222";
-        detail2.number = 2;
-        detail2.totalprice = 120;
-        detail2.status = "待发货";
-        detail2.buyer = "小昊";
-        detail1.receiverName = "teddy";
-        detail1.receiverAddress = "广东省东莞市大朗镇敏捷春天花园3栋";
-        detail1.receiverPhone = "18819253694";
-        var detail3 = {};
-        detail3.product = "兔绒包芯纱";
-        detail3.spec = "28/2";
-        detail3.color = "834533";
-        detail3.number = 1;
-        detail3.totalprice = 55;
-        detail3.status = "已发货";
-        detail3.buyer = "小祺";
-        detail1.receiverName = "真猪";
-        detail1.receiverAddress = "广东省东莞市大朗镇敏捷春天花园3栋";
-        detail1.receiverPhone = "18819253694";
-        order.push(detail1);
-        order.push(detail2);
-        order.push(detail3);
-        return order;
+        this.$http.get(this.$api.api.getorder+this.username).then(
+          (response) => {
+            if (JSON.parse(response.bodyText).isSuccess === true) {
+              this.orders = JSON.parse(response.bodyText).data.order;
+            } else {
+              this.$message(JSON.parse(response.bodyText).msg);
+            }
+          })
       },
       goToPay: function() {
         this.$router.push('/pay');
@@ -122,8 +93,8 @@
       }
     },
     mounted () {
-      this.orders = this.getOrder();
       this.username = this.$route.params.name;
+      this.getOrder();
     }
 
   }

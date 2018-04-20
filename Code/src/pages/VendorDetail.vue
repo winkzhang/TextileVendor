@@ -1,3 +1,4 @@
+<!--author:winkzhang-->
 <template>
   <div class="vendor-detail-wrapper">
     <div id="index">
@@ -313,7 +314,7 @@
           arr.push(obj);
         }
         enterproduct.name = this.username;
-        enterproduct.productId = this.productType;
+        enterproduct.productId = this.prevType;
         enterproduct.detail = arr;
         // 此时是编辑，已经上传过pdf，有url
         enterproduct.url = this.url;
@@ -326,19 +327,20 @@
                 that.postFile();
                 return;
               }
-              this.showAdd = false;
+              this.showExisted = false;
             } else {
               this.$message(JSON.parse(response.bodyText).msg);
               if (that.file !== '') {
                 that.postFile();
                 return;
               }
-              this.showAdd = false;
+              this.showExisted = false;
             }
           })
       },
       postFile: function() {
         this.showAdd = false;
+        this.showExisted = false;
         event.preventDefault();
         var formData = new FormData();
         formData.append('productId', this.productType);

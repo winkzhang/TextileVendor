@@ -1,3 +1,4 @@
+<!--author:winkzhang-->
 var root = 'http://wink.net.cn:5000/';
 export default {
   api : {
@@ -11,6 +12,7 @@ export default {
     'uploadpdf': root + 'store/enterproduct/pdf',
     'getcommodity': root + 'home/commodity',
     'gettotalinfo': root + 'store/totalinfo?name=',
-    'deleteproduct': root + 'store/deleteproduct'
+    'deleteproduct': root + 'store/deleteproduct',
+    'getorder': root+ 'vendor/getorder?username='
   }
 }

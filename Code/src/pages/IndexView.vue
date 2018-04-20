@@ -1,12 +1,6 @@
+<!--author:winkzhang-->
 <template>
   <div>
-    <!--<div class="header">
-      <div class="header-wrapper">
-        <i class="logo logo-header"></i>
-        <span class="store-version">商家中心</span>
-        <span class="my-name">{{this.username}}</span>
-      </div>
-    </div>-->
     <div id="index">
       <div class="box-wrapper">
         <div class="box-header">

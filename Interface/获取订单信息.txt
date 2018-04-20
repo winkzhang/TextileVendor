@@ -1,0 +1,25 @@
+// 商家获取订单
+// http://wink.net.cn:5000/vendor/getorder?username="jeako"
+// method: get
+
+// respond:
+   var req = {
+     isSuccess: true,
+     msg: "获取订单信息成功",
+     data; {
+         order: [
+           {
+           productName: "丝光棉",
+           amount: 4,
+           total_price: 400,
+           status: "待支付",
+           spec: "28/2",
+           color: "2311312",
+           customer: "wink",
+           receiver_name: "aaa",
+           receiver_phone: "23131432",
+           receiver_address: "dsadsafsd"，
+           company: "小昊纺织有限公司"
+           }
+         ]
+     }
